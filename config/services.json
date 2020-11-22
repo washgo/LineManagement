@@ -1,0 +1,33 @@
+{
+    "Service1":{
+        "Install":{
+            "Config":{
+                "Port": "",
+                "Password": ""
+            },
+            "Command":[
+            ],
+            "Generation": {
+                "ConfigContent":{
+                },
+                "ShareLink": {
+                    "Prefix": "",
+                    "Content": ""
+                }
+            }
+        },
+        "Start":{
+            "Config":{
+                "File": ""
+            },
+            "Command":[
+                ""
+            ]
+        },
+        "Stop":{
+            "Command":[
+                ""
+            ]
+        }
+    }
+}
