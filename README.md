@@ -1,2 +1,9 @@
-# LineManagement
-Management Cloud Servers.
+# 简介
+LineManagement主要用于管理云主机，当前管理方式只针对Vultr单一平台，并且只能通过Api的方式进行。后续会添加自定义服务器。
+
+# 配置
+LineManagement可以配置各种服务，服务的添加和删除通过配置文件进行。
+
+# 后续
+## 添加其它云主机平台
+## 添加自定义添加云主机
