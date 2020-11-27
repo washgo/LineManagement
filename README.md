@@ -7,9 +7,10 @@ LineManagement可以配置各种服务，服务的添加和删除通过配置文
 # 发布平台
 ## 目前已打包平台
 Windows x64
-Ubuntu x64
-## 需自行打包平台
 Windows x86
+
+## 需自行打包平台
+Ubuntu x64
 MacOS
 
 # 后续
