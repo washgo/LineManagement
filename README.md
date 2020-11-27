@@ -5,40 +5,40 @@ LineManagement主要用于管理云主机，当前管理方式只针对Vultr单�
 
 # 配置
 LineManagement可以配置各种服务，服务的添加和删除通过设置文件config/services.json进行。
-```json
+```javascript
 {
     "Service1":{
         // 服务安装阶段
         "Install":{
             "Config":{
-                "Port": "", //服务暴露端口
-                "Password": ""  //服务暴露密码,如果需要
+                "Port": "", // 服务暴露端口
+                "Password": ""  // 服务暴露密码,如果需要
             },
             "Command":[
-                ""  //需要执行的命令
+                ""  // 需要执行的命令
             ],
             "Generation": {
-                "ConfigContent":{ //在本地生成服务的配置文件
+                "ConfigContent":{ // 在本地生成服务的配置文件
                 },
-                "ShareLink": {  //产生服务的分享信息
-                    "Prefix": "", //前缀
-                    "Content": "" //内容
+                "ShareLink": {  // 产生服务的分享信息
+                    "Prefix": "", // 前缀
+                    "Content": "" // 内容
                 }
             }
         },
         // 启动服务
         "Start":{
             "Config":{
-                "File": ""  //服务器上对应的配置文件
+                "File": ""  // 服务器上对应的配置文件
             },
             "Command":[
-                ""  //需要执行的命令
+                ""  // 需要执行的命令
             ]
         },
-        //停止服务
+        // 停止服务
         "Stop":{
             "Command":[
-                ""  //需要执行的命令
+                ""  // 需要执行的命令
             ]
         }
     }
