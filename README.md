@@ -47,8 +47,8 @@ LineManagement可以配置各种服务，服务的添加和删除通过设置文
 
 # 发布平台
 ## 目前已打包平台
-Windows x64\n
-Windows x86\n
+Windows x64  
+Windows x86  
 MacOS
 
 ## 需自行打包平台
