@@ -47,12 +47,12 @@ LineManagement可以配置各种服务，服务的添加和删除通过设置文
 
 # 发布平台
 ## 目前已打包平台
-Windows x64
-Windows x86
+Windows x64\n
+Windows x86\n
+MacOS
 
 ## 需自行打包平台
 Ubuntu x64
-MacOS
 
 # 后续
 ### 添加其它云主机平台
