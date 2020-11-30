@@ -1,6 +1,5 @@
 from MainFrame import MainFrame
 from DialogCreateWindow import DialogCreateWindow
-from FileUploadDownload import FileUploadDownload
 import wx, wx._adv, wx._html
 import threading, json, os, uuid
 import config, server, region, operatingsystem, plan, log, service, WorkThread
