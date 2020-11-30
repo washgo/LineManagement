@@ -26,7 +26,7 @@ class MainFrame ( wx.Frame ):
 
 		bSizer26 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.m_staticTextVps = wx.StaticText( self, wx.ID_ANY, u"平台:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticTextVps = wx.StaticText( self, wx.ID_ANY, u"平台:", wx.DefaultPosition, wx.Size( 36,-1 ), 0 )
 		self.m_staticTextVps.Wrap( -1 )
 
 		bSizer26.Add( self.m_staticTextVps, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
@@ -36,7 +36,7 @@ class MainFrame ( wx.Frame ):
 		self.m_choiceVPS.SetSelection( 0 )
 		bSizer26.Add( self.m_choiceVPS, 0, wx.ALL, 5 )
 
-		self.m_staticText2 = wx.StaticText( self, wx.ID_ANY, u"API-Key:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText2 = wx.StaticText( self, wx.ID_ANY, u"API-Key:", wx.DefaultPosition, wx.Size( 60,-1 ), 0 )
 		self.m_staticText2.Wrap( -1 )
 
 		bSizer26.Add( self.m_staticText2, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
@@ -44,7 +44,7 @@ class MainFrame ( wx.Frame ):
 		self.m_textCtrlAPIKey = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 320,-1 ), 0 )
 		bSizer26.Add( self.m_textCtrlAPIKey, 0, wx.ALL, 5 )
 
-		self.m_staticText16 = wx.StaticText( self, wx.ID_ANY, u"名称:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText16 = wx.StaticText( self, wx.ID_ANY, u"名称:", wx.DefaultPosition, wx.Size( 36,-1 ), 0 )
 		self.m_staticText16.Wrap( -1 )
 
 		bSizer26.Add( self.m_staticText16, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
@@ -52,7 +52,7 @@ class MainFrame ( wx.Frame ):
 		self.m_textCtrlName = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer26.Add( self.m_textCtrlName, 0, wx.ALL, 5 )
 
-		self.m_buttonSetAPIKey = wx.Button( self, wx.ID_ANY, u"设置API-Key", wx.DefaultPosition, wx.Size( -1,23 ), 0 )
+		self.m_buttonSetAPIKey = wx.Button( self, wx.ID_ANY, u"设置APIKey", wx.DefaultPosition, wx.Size( -1,23 ), 0 )
 		bSizer26.Add( self.m_buttonSetAPIKey, 0, wx.ALL, 5 )
 
 
@@ -62,7 +62,7 @@ class MainFrame ( wx.Frame ):
 
 		bSizer34 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.m_staticText18 = wx.StaticText( self, wx.ID_ANY, u"API :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText18 = wx.StaticText( self, wx.ID_ANY, u"API :", wx.DefaultPosition, wx.Size( 36,-1 ), 0 )
 		self.m_staticText18.Wrap( -1 )
 
 		bSizer34.Add( self.m_staticText18, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
@@ -108,7 +108,7 @@ class MainFrame ( wx.Frame ):
 
 		bSizer29 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.m_staticText19 = wx.StaticText( self, wx.ID_ANY, u"服务:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText19 = wx.StaticText( self, wx.ID_ANY, u"服务:", wx.DefaultPosition, wx.Size( 36,-1 ), 0 )
 		self.m_staticText19.Wrap( -1 )
 
 		bSizer29.Add( self.m_staticText19, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
