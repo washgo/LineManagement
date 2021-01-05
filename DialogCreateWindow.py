@@ -4,10 +4,11 @@ import wx
 import threading
 
 class DialogCreateWindow(DialogCreate):
-	def __init__(self, parent):
+	def __init__(self, parent, platform_name):
 		super().__init__(parent)
 
 		self.name = parent.get_select_apikey_name()
+		self.platform_name = platform_name
 		self._initialize_data()
 		self._initialize_ui()
 
@@ -24,19 +25,19 @@ class DialogCreateWindow(DialogCreate):
 		'''
 		初始化region的数据
 		'''
-		self._regions = region.read_region_config(self.name)
+		self._regions = region.read_region_config(self.platform_name, self.name)
 
 	def _initialize_os_data(self):
 		'''
 		初始化os的数据
 		'''
-		self._oss = operatingsystem.read_config(self.name)
+		self._oss = operatingsystem.read_config(self.platform_name, self.name)
 
 	def _initialize_plan_data(self):
 		'''
 		初始化plan的数据
 		'''
-		self._plans = plan.read_config(self.name)
+		self._plans = plan.read_config(self.platform_name, self.name)
 
 	def _get_region_list(self):
 		'''
@@ -167,7 +168,7 @@ class DialogCreateWindow(DialogCreate):
 		创建服务器
 		'''
 		for i in range(int(server_num)):
-			server.create_server(self.name, region_dcid, plan_id, osid, project_name, project_name)
+			server.create_server(self.platform_name, self.name, region_dcid, plan_id, osid, project_name, project_name)
 		wx.CallAfter(self.callback_update)
 
 	def callback_update(self):
