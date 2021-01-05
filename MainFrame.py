@@ -21,6 +21,7 @@ class MainFrame ( wx.Frame ):
 		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"线路管理", pos = wx.DefaultPosition, size = wx.Size( 800,700 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
 		self.SetSizeHints( wx.Size( 800,700 ), wx.Size( 800,700 ) )
+		self.SetBackgroundColour( wx.Colour( 211, 211, 211 ) )
 
 		bSizer1 = wx.BoxSizer( wx.VERTICAL )
 
@@ -31,10 +32,12 @@ class MainFrame ( wx.Frame ):
 
 		bSizer26.Add( self.m_staticTextVps, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
-		m_choiceVPSChoices = [ u"Vultr" ]
-		self.m_choiceVPS = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 90,-1 ), m_choiceVPSChoices, 0 )
-		self.m_choiceVPS.SetSelection( 0 )
-		bSizer26.Add( self.m_choiceVPS, 0, wx.ALL, 5 )
+		m_choicePlatformChoices = [ u"Vultr", u"Custom" ]
+		self.m_choicePlatform = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 90,25 ), m_choicePlatformChoices, 0 )
+		self.m_choicePlatform.SetSelection( 0 )
+		self.m_choicePlatform.SetBackgroundColour( wx.Colour( 255, 255, 255 ) )
+
+		bSizer26.Add( self.m_choicePlatform, 0, wx.ALL, 5 )
 
 		self.m_staticText2 = wx.StaticText( self, wx.ID_ANY, u"API-Key:", wx.DefaultPosition, wx.Size( 60,-1 ), 0 )
 		self.m_staticText2.Wrap( -1 )
@@ -42,6 +45,8 @@ class MainFrame ( wx.Frame ):
 		bSizer26.Add( self.m_staticText2, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
 		self.m_textCtrlAPIKey = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 320,-1 ), 0 )
+		self.m_textCtrlAPIKey.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
+
 		bSizer26.Add( self.m_textCtrlAPIKey, 0, wx.ALL, 5 )
 
 		self.m_staticText16 = wx.StaticText( self, wx.ID_ANY, u"名称:", wx.DefaultPosition, wx.Size( 36,-1 ), 0 )
@@ -52,7 +57,7 @@ class MainFrame ( wx.Frame ):
 		self.m_textCtrlName = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer26.Add( self.m_textCtrlName, 0, wx.ALL, 5 )
 
-		self.m_buttonSetAPIKey = wx.Button( self, wx.ID_ANY, u"设置APIKey", wx.DefaultPosition, wx.Size( -1,23 ), 0 )
+		self.m_buttonSetAPIKey = wx.Button( self, wx.ID_ANY, u"设置API", wx.DefaultPosition, wx.Size( -1,25 ), 0 )
 		bSizer26.Add( self.m_buttonSetAPIKey, 0, wx.ALL, 5 )
 
 
@@ -68,14 +73,14 @@ class MainFrame ( wx.Frame ):
 		bSizer34.Add( self.m_staticText18, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
 		m_choiceNameChoices = []
-		self.m_choiceName = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 90,-1 ), m_choiceNameChoices, 0 )
+		self.m_choiceName = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 90,25 ), m_choiceNameChoices, 0 )
 		self.m_choiceName.SetSelection( 0 )
 		bSizer34.Add( self.m_choiceName, 0, wx.ALL, 5 )
 
-		self.m_buttonUpdate = wx.Button( self, wx.ID_ANY, u"更新数据", wx.DefaultPosition, wx.Size( 70,23 ), 0 )
+		self.m_buttonUpdate = wx.Button( self, wx.ID_ANY, u"更新数据", wx.DefaultPosition, wx.Size( 70,25 ), 0 )
 		bSizer34.Add( self.m_buttonUpdate, 0, wx.ALL, 5 )
 
-		self.m_buttonStopUpdate = wx.Button( self, wx.ID_ANY, u"停止更新", wx.DefaultPosition, wx.Size( 70,23 ), 0 )
+		self.m_buttonStopUpdate = wx.Button( self, wx.ID_ANY, u"停止更新", wx.DefaultPosition, wx.Size( 70,25 ), 0 )
 		bSizer34.Add( self.m_buttonStopUpdate, 0, wx.ALL, 5 )
 
 
@@ -83,19 +88,19 @@ class MainFrame ( wx.Frame ):
 
 		bSizer35 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.m_buttonCreate = wx.Button( self, wx.ID_ANY, u"创建线路", wx.DefaultPosition, wx.Size( 70,23 ), 0 )
+		self.m_buttonCreate = wx.Button( self, wx.ID_ANY, u"创建线路", wx.DefaultPosition, wx.Size( 70,25 ), 0 )
 		bSizer35.Add( self.m_buttonCreate, 0, wx.ALL, 5 )
 
-		self.m_buttonDelete = wx.Button( self, wx.ID_ANY, u"删除线路", wx.DefaultPosition, wx.Size( 70,23 ), 0 )
+		self.m_buttonDelete = wx.Button( self, wx.ID_ANY, u"删除线路", wx.DefaultPosition, wx.Size( 70,25 ), 0 )
 		bSizer35.Add( self.m_buttonDelete, 0, wx.ALL, 5 )
 
-		self.m_buttonStart = wx.Button( self, wx.ID_ANY, u"开启线路", wx.DefaultPosition, wx.Size( 70,23 ), 0 )
+		self.m_buttonStart = wx.Button( self, wx.ID_ANY, u"开启线路", wx.DefaultPosition, wx.Size( 70,25 ), 0 )
 		bSizer35.Add( self.m_buttonStart, 0, wx.ALL, 5 )
 
-		self.m_buttonStop = wx.Button( self, wx.ID_ANY, u"停止线路", wx.DefaultPosition, wx.Size( 70,23 ), 0 )
+		self.m_buttonStop = wx.Button( self, wx.ID_ANY, u"停止线路", wx.DefaultPosition, wx.Size( 70,25 ), 0 )
 		bSizer35.Add( self.m_buttonStop, 0, wx.ALL, 5 )
 
-		self.m_buttonRestart = wx.Button( self, wx.ID_ANY, u"重启线路", wx.DefaultPosition, wx.Size( 70,23 ), 0 )
+		self.m_buttonRestart = wx.Button( self, wx.ID_ANY, u"重启线路", wx.DefaultPosition, wx.Size( 70,25 ), 0 )
 		bSizer35.Add( self.m_buttonRestart, 0, wx.ALL, 5 )
 
 
@@ -114,17 +119,17 @@ class MainFrame ( wx.Frame ):
 		bSizer29.Add( self.m_staticText19, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
 		m_choiceServiceChoices = []
-		self.m_choiceService = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 90,-1 ), m_choiceServiceChoices, 0 )
+		self.m_choiceService = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 90,25 ), m_choiceServiceChoices, 0 )
 		self.m_choiceService.SetSelection( 0 )
 		bSizer29.Add( self.m_choiceService, 0, wx.ALL, 5 )
 
-		self.m_buttonBuildService = wx.Button( self, wx.ID_ANY, u"安装服务", wx.DefaultPosition, wx.Size( 70,23 ), 0 )
+		self.m_buttonBuildService = wx.Button( self, wx.ID_ANY, u"安装服务", wx.DefaultPosition, wx.Size( 70,25 ), 0 )
 		bSizer29.Add( self.m_buttonBuildService, 0, wx.ALL, 5 )
 
-		self.m_buttonStartService = wx.Button( self, wx.ID_ANY, u"启动服务", wx.DefaultPosition, wx.Size( 70,23 ), 0 )
+		self.m_buttonStartService = wx.Button( self, wx.ID_ANY, u"启动服务", wx.DefaultPosition, wx.Size( 70,25 ), 0 )
 		bSizer29.Add( self.m_buttonStartService, 0, wx.ALL, 5 )
 
-		self.m_buttonStopService = wx.Button( self, wx.ID_ANY, u"停止服务", wx.DefaultPosition, wx.Size( 70,23 ), 0 )
+		self.m_buttonStopService = wx.Button( self, wx.ID_ANY, u"停止服务", wx.DefaultPosition, wx.Size( 70,25 ), 0 )
 		bSizer29.Add( self.m_buttonStopService, 0, wx.ALL, 5 )
 
 
@@ -253,6 +258,7 @@ class MainFrame ( wx.Frame ):
 		self.Centre( wx.BOTH )
 
 		# Connect Events
+		self.m_choicePlatform.Bind( wx.EVT_CHOICE, self.choice_platform )
 		self.m_buttonSetAPIKey.Bind( wx.EVT_BUTTON, self.set_api_key )
 		self.m_choiceName.Bind( wx.EVT_CHOICE, self.choice_name )
 		self.m_buttonUpdate.Bind( wx.EVT_BUTTON, self.button_update_data )
@@ -277,6 +283,9 @@ class MainFrame ( wx.Frame ):
 
 
 	# Virtual event handlers, overide them in your derived class
+	def choice_platform( self, event ):
+		event.Skip()
+
 	def set_api_key( self, event ):
 		event.Skip()
 
