@@ -141,15 +141,22 @@ class MainWindow(MainFrame):
         '''
         初始化api-key name
         '''
-        apikeyname_data = config.get_apikeynames()
+        # 清除数据
+        self.m_choiceName.Clear()
+        self._apikeynames.clear()
+
+        platform_name = self.get_select_platform_name()
+        apikeyname_data = config.get_apikeynames(platform_name)
         for apikey in apikeyname_data.keys():
             self._apikeynames[apikey] = apikeyname_data[apikey]
+        # print(list(self._apikeynames.values()))
         self.m_choiceName.SetItems(list(self._apikeynames.values()))
 
     def _initialize_services(self):
         '''
         初始化service
         '''
+        platform_name = self.get_select_platform_name()
         services = config.get_services()
         for service_key in services.keys():
             self._services[service_key] = services[service_key]
@@ -165,13 +172,24 @@ class MainWindow(MainFrame):
             name = self.m_choiceName.GetString(selection_index).strip()
         return name
 
+    def get_select_platform_name(self):
+        '''
+        获取当前选择的平台
+        '''
+        selection_index = self.m_choicePlatform.GetSelection()
+        name = ''
+        if selection_index >= 0:
+            name = self.m_choicePlatform.GetString(selection_index).strip()
+        return name
+
     def get_servers(self):
         '''
         获取所有server列表
         '''
+        platform_name = self.get_select_platform_name()
         name = self.get_select_apikey_name()
-        self._servers = server.read_config(name)
-        server_services = service.read_service_config(name)
+        self._servers = server.read_config(platform_name, name)
+        server_services = service.read_service_config(platform_name, name)
         projects = ['']
         if self._servers is not None:
             self.m_gridLine.InsertRows(0, len(self._servers))
@@ -190,11 +208,11 @@ class MainWindow(MainFrame):
                 wx.CallAfter(self.callback_update_server, i, server_item)
                 i += 1
 
-    def get_server_by_subid(self, name, subid):
+    def get_server_by_subid(self, platform_name, name, subid):
         '''
         获取某个server的信息
         '''
-        server_item = server.get_server_by_subid(name, subid)
+        server_item = server.get_server_by_subid(platform_name, name, subid)
         self._servers[subid] = server_item
         if server_item is not None:
             i = self._updating_server_indexs[subid]
@@ -260,29 +278,32 @@ class MainWindow(MainFrame):
         '''
         初始化plans
         '''
+        platform_name = self.get_select_platform_name()
         name = self.get_select_apikey_name()
-        self._plans = plan.read_config(name)
+        self._plans = plan.read_config(platform_name, name)
 
     def _initialize_regions(self):
         '''
         初始化regions
         '''
+        platform_name = self.get_select_platform_name()
         name = self.get_select_apikey_name()
-        self._regions = region.read_region_config(name)
+        self._regions = region.read_region_config(platform_name, name)
 
     def _initialize_oss(self):
         '''
         初始化oss
         '''
+        platform_name = self.get_select_platform_name()
         name = self.get_select_apikey_name()
-        self._oss = operatingsystem.read_config(name)
+        self._oss = operatingsystem.read_config(platform_name, name)
 
-    def _clear_configuration_data(self, name):
+    def _clear_configuration_data(self, platform_name, name):
         '''
         清除配置数据
         '''
-        region.clear_config(name)
-        plan.clear_config(name)
+        region.clear_config(platform_name, name)
+        plan.clear_config(platform_name, name)
         # os.clear_config()
 
     def set_api_key(self, event):
@@ -299,13 +320,14 @@ class MainWindow(MainFrame):
             wx.MessageBox('请设置名称','警告',wx.OK|wx.ICON_INFORMATION)
             return
 
-        if config.modify_apikey(name, api_key):
-            self._clear_configuration_data(name)
+        platform_name = self.get_select_platform_name()
+        if config.modify_apikey(platform_name, name, api_key):
+            self._clear_configuration_data(platform_name, name)
             self._initialize()
 
     def gauge_progress_update(self,event): 
         if self._gauge_value < 100: 
-            self._gauge_value += 1 
+            self._gauge_value += 1
             self.m_gaugeProgress.SetValue(self._gauge_value)
         else:
             self._gauge_value = 0
@@ -314,13 +336,14 @@ class MainWindow(MainFrame):
         '''
         更新数据事件方法
         '''
+        platform_name = self.get_select_platform_name()
         name = self.get_select_apikey_name()
-        if not config.exist_apikey(name):
+        if not config.exist_apikey(platform_name, name):
             wx.MessageBox('请先选择API','警告',wx.OK|wx.ICON_INFORMATION)
             return
         # thread = threading.Thread(target=self.update_data)
         # thread.start()
-        self.thread = WorkThread.WorkThread(target=self.update_data)
+        self.thread = WorkThread.WorkThread(target=self.update_data, args=(platform_name,))
         self.thread.start()
         # 进度条
         self._gauge_value = 0
@@ -335,25 +358,25 @@ class MainWindow(MainFrame):
         self.callback_update_status('停止更新')
         self.update_progress_task_end()
 
-    def update_data(self):
+    def update_data(self, platform_name):
         '''
         更新数据
         '''
         name = self.get_select_apikey_name()
         # 获取server数据
         wx.CallAfter(self.callback_update_status, '获取更新包1')
-        self._servers = server.get_servers(name)
+        self._servers = server.get_servers(platform_name, name)
         # 更新服务状态
         wx.CallAfter(self.callback_update_status, '更新服务状态')
         # 获取plan数据
         wx.CallAfter(self.callback_update_status, '获取更新包2')
-        self._plans = plan.get_plans(name)
+        self._plans = plan.get_plans(platform_name, name)
         # 获取region数据
         wx.CallAfter(self.callback_update_status, '获取更新包3')
-        self._regions = region.get_regions(name)
+        self._regions = region.get_regions(platform_name, name)
         # 获取os数据
         wx.CallAfter(self.callback_update_status, '获取更新包4')
-        self._oss = operatingsystem.get_os(name)
+        self._oss = operatingsystem.get_os(platform_name, name)
         wx.CallAfter(self.callback_update_data)
         wx.CallAfter(self.callback_update_status, '更新完成')
 
@@ -419,6 +442,13 @@ class MainWindow(MainFrame):
         if len(self._plans) == 0 or len(self._regions) == 0 or len(self._oss) == 0:
             is_updated_data = False
         return is_updated_data
+
+    def choice_platform( self, event ):
+        '''
+        选择平台
+        '''
+        select_platform = self.m_choicePlatform.GetString(self.m_choicePlatform.GetSelection()).strip()
+        self._initialize_api_key_name()
 
     def choice_name(self, event):
         '''
@@ -491,6 +521,7 @@ class MainWindow(MainFrame):
         '''
         创建线路
         '''
+        platform_name = self.get_select_platform_name()
         name = self.get_select_apikey_name()
         if not config.exist_apikey(name):
             wx.MessageBox('请先设置API-Key','警告',wx.OK|wx.ICON_INFORMATION)
@@ -501,7 +532,7 @@ class MainWindow(MainFrame):
             wx.MessageBox('请先更新数据','警告',wx.OK|wx.ICON_INFORMATION)
             return
 
-        dialogCreateWindow = DialogCreateWindow(self)
+        dialogCreateWindow = DialogCreateWindow(self, platform_name)
         if dialogCreateWindow.ShowModal() == wx.ID_OK:
             self._gauge_value = 0
             self.Bind(wx.EVT_IDLE, self.gauge_progress_update)
@@ -525,16 +556,17 @@ class MainWindow(MainFrame):
         '''
         执行server操作
         '''
+        platform_name = self.get_select_platform_name()
         server_subid = self.get_current_grid_subid()
         currentRow = self.m_gridLine.GetGridCursorRow()
-        thread = threading.Thread(target=self.execute_server_backend, args=(server_subid, action, currentRow, ))
+        thread = threading.Thread(target=self.execute_server_backend, args=(platform_name, server_subid, action, currentRow, ))
         thread.start()
 
         # 进度条
         self._gauge_value = 0
         self.Bind(wx.EVT_IDLE, self.gauge_progress_update)
 
-    def execute_server_backend(self, subid, action, row):
+    def execute_server_backend(self, platform_name, subid, action, row):
         '''
         后台执行server操作
         '''
@@ -689,6 +721,7 @@ class MainWindow(MainFrame):
         定时器，定时更新
         '''
         # self._initialize_servers()
+        platform_name = self.get_select_platform_name()
         name = self.get_select_apikey_name()
         for subid in self._updating_server_indexs.keys():
             thread = threading.Thread(target=self.get_server_by_subid, args=(name, subid,))
@@ -717,7 +750,7 @@ class MainWindow(MainFrame):
         name = self.get_select_apikey_name()
         log.write_log(name, content)
 
-    def build_service_thread(self, subid, host, port, username, password, installer='apt'):
+    def build_service_thread(self, platform_name, subid, host, port, username, password, installer='apt'):
         try:
             self._gauge_value = 0
             self.Bind(wx.EVT_IDLE, self.gauge_progress_update)
@@ -750,7 +783,7 @@ class MainWindow(MainFrame):
                         if temp_password != '':
                             service_password = temp_password
                 name = self.get_select_apikey_name()
-                if service.create_service(name, subid, current_service ,service_port, service_password):
+                if service.create_service(platform_name, name, subid, current_service ,service_port, service_password):
                     if 'Command' in service_item_install.keys():
                         install_command = service_item_install['Command']
                         for install_item in install_command:
@@ -854,6 +887,7 @@ class MainWindow(MainFrame):
         '''
         安装服务
         '''
+        platform_name = self.get_select_platform_name()
         subid = self.get_current_grid_subid()
         host = self.get_current_grid_ip()
         if host == '':
@@ -870,7 +904,7 @@ class MainWindow(MainFrame):
         installer = 'apt'
         if 'CentOS' in os:
             installer = 'yum'
-        thread = threading.Thread(target=self.build_service_thread,args=(subid, host, port, username, password, installer,))
+        thread = threading.Thread(target=self.build_service_thread,args=(platform_name, subid, host, port, username, password, installer,))
         thread.start()
 
     def start_service(self, event):
