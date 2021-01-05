@@ -523,7 +523,7 @@ class MainWindow(MainFrame):
         '''
         platform_name = self.get_select_platform_name()
         name = self.get_select_apikey_name()
-        if not config.exist_apikey(name):
+        if not config.exist_apikey(platform_name, name):
             wx.MessageBox('请先设置API-Key','警告',wx.OK|wx.ICON_INFORMATION)
             return
 
@@ -542,9 +542,10 @@ class MainWindow(MainFrame):
         '''
         删除线路
         '''
+        platform_name = self.get_select_platform_name()
         name = self.get_select_apikey_name()
         server_subid = self.get_current_grid_subid()
-        if server.delete_server(name, server_subid):
+        if server.delete_server(platform_name, name, server_subid):
             self._servers.pop(server_subid)
             self.m_gridLine.DeleteRows(self.m_gridLine.GetGridCursorRow())
             self.m_gridLine.ForceRefresh()
@@ -573,11 +574,11 @@ class MainWindow(MainFrame):
         operation_result = False
         name = self.get_select_apikey_name()
         if action == 'start':
-            operation_result = server.start_server(name, subid)
+            operation_result = server.start_server(platform_name, name, subid)
         elif action == 'stop':
-            operation_result = server.stop_server(name, subid)
+            operation_result = server.stop_server(platform_name, name, subid)
         elif action == 'restart':
-            operation_result = server.reboot_server(name, subid)
+            operation_result = server.reboot_server(platform_name, name, subid)
         wx.CallAfter(self.callback_execute_server, action, operation_result, row)
         
     def callback_execute_server(self, action, operation_result, row):
@@ -724,7 +725,7 @@ class MainWindow(MainFrame):
         platform_name = self.get_select_platform_name()
         name = self.get_select_apikey_name()
         for subid in self._updating_server_indexs.keys():
-            thread = threading.Thread(target=self.get_server_by_subid, args=(name, subid,))
+            thread = threading.Thread(target=self.get_server_by_subid, args=(platform_name, name, subid,))
             thread.start()
 
     def get_available_err(self, errors):

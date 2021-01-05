@@ -35,7 +35,7 @@ def get_server_by_subid(platform_name, name, subid):
     return None
 
 def create_server(platform_name, name, region_dcid, plan_id, osid, project_name, server_num):
-    api_key = config.get_apikey(name)
+    api_key = config.get_apikey(platform_name, name)
     headers = {
         'API-Key':api_key
     }
