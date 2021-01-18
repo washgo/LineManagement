@@ -380,14 +380,14 @@ class MainWindow(MainFrame):
         wx.CallAfter(self.callback_update_data)
         wx.CallAfter(self.callback_update_status, '更新完成')
 
-    def callback_update_service_list(self, subid, service):
+    def callback_update_service_list(self, platform_name, subid, service):
         '''
         回调更新服务列表
         '''
         name = self.get_select_apikey_name()
-        server.update_service_list(name, subid, service)
+        server.update_service_list(platform_name, name, subid, service)
 
-    def callback_insert_service(self, subid, service_name):
+    def callback_insert_service(self, platform_name, subid, service_name):
         '''
         回调初始化Service
         '''
@@ -398,7 +398,7 @@ class MainWindow(MainFrame):
             service_item_install = service_item['Install']
             if 'Generation' in service_item_install.keys():
                 service_item_install_generation = service_item_install['Generation']
-        server.insert_service(name, subid, service_name, service_item_install_generation)
+        server.insert_service(platform_name, name, subid, service_name, service_item_install_generation)
     
     def callback_update_status(self, status_message):
         '''
@@ -744,12 +744,12 @@ class MainWindow(MainFrame):
                 err += line_err
         return err
 
-    def write_log(self, content):
+    def write_log(self, platform_name, content):
         '''
         日志
         '''
         name = self.get_select_apikey_name()
-        log.write_log(name, content)
+        log.write_log(platform_name, name, content)
 
     def build_service_thread(self, platform_name, subid, host, port, username, password, installer='apt'):
         try:
@@ -768,21 +768,26 @@ class MainWindow(MainFrame):
                 return
             else:
                 service_item_install = service_item['Install']
-                self.write_log('%s install start.'%current_service)
+                self.write_log(platform_name, '%s install start.'%current_service)
                 wx.CallAfter(self.callback_update_status, '%s开始安装'%current_service)
                 service_item_start = ''
                 service_port = 34001
                 service_password = 'gogoline'
+                service_config_file = ''
+                config_content = ''
                 if 'Config' in service_item_install.keys():
                     install_item_config = service_item_install['Config']
-                    if 'Port' in install_item_config.keys():
-                        temp_port = install_item_config['Port']
-                        if temp_port != '':
-                            service_port = temp_port
-                    if 'Password' in install_item_config.keys():
-                        temp_password = install_item_config['Password']
-                        if temp_password != '':
-                            service_password = temp_password
+                    host_server = ''
+                    if 'Host' in install_item_config.keys():
+                        host_server = install_item_config['Host']
+                    if 'Content' in install_item_config.keys():
+                        config_content = install_item_config['Content']
+                        service_port = config_content['server_port']
+                        service_password = config_content['password']
+                        if host_server == 'server':
+                            config_content['server'] = host
+                    if 'File' in install_item_config.keys():
+                        service_config_file = install_item_config['File']
                 name = self.get_select_apikey_name()
                 if service.create_service(platform_name, name, subid, current_service ,service_port, service_password):
                     if 'Command' in service_item_install.keys():
@@ -793,22 +798,35 @@ class MainWindow(MainFrame):
                             wx.CallAfter(self.callback_update_message, ''.join(stderr.readlines()))
                             err = self.get_available_err(stderr.readlines())
                             if '' != err:
-                                self.write_log(err)
+                                self.write_log(platform_name, err)
                                 wx.CallAfter(self.callback_update_status, '%s创建失败'%current_service)
                             else:
-                                self.write_log(''.join(stdout.readlines()))
-                                self.write_log('%s install end.'%current_service)
+                                self.write_log(platform_name, ''.join(stdout.readlines()))
+                                self.write_log(platform_name, '%s install end.'%current_service)
                                 wx.CallAfter(self.callback_update_status, '%s创建成功'%current_service)
-                                wx.CallAfter(self.callback_insert_service, subid, current_service)
+                                wx.CallAfter(self.callback_insert_service, platform_name, subid, current_service)
+                    if service_config_file != '' and config_content != '':
+                        stdin, stdout, stderr = ssh.exec_command('echo %s > %s'%(config_content, service_config_file))
+                        wx.CallAfter(self.callback_update_message, ''.join(stdout.readlines()))
+                        wx.CallAfter(self.callback_update_message, ''.join(stderr.readlines()))
+                        err = self.get_available_err(stderr.readlines())
+                        if '' != err:
+                            self.write_log(platform_name, err)
+                            wx.CallAfter(self.callback_update_status, '%s配置失败'%current_service)
+                        else:
+                            self.write_log(platform_name, ''.join(stdout.readlines()))
+                            self.write_log(platform_name, '%s 配置成功 .'%current_service)
+                            wx.CallAfter(self.callback_update_status, '%s配置成功'%current_service)
+                            wx.CallAfter(self.callback_insert_service, platform_name, subid, current_service)
                 else:
                     wx.CallAfter(self.callback_update_message, '%s创建失败'%current_service)
         except Exception as e:
-            self.write_log('%s,%s'%(host,str(e)))
+            self.write_log(platform_name, '%s,%s'%(host,str(e)))
             wx.CallAfter(self.callback_update_status, '连接失败')
             wx.CallAfter(self.callback_update_message, str(e))
         wx.CallAfter(self.callback_update_data)
 
-    def start_service_thread(self, subid, host, port, username, password):
+    def start_service_thread(self, platform_name, subid, host, port, username, password):
         '''
         启动服务
         '''
@@ -830,22 +848,22 @@ class MainWindow(MainFrame):
                         return
                     else:
                         for command_string in service_item_start['Command']:
-                            self.write_log('%s install start.'%current_service)
+                            self.write_log(platform_name, '%s install start.'%current_service)
                             wx.CallAfter(self.callback_update_status, '%s开始启动'%current_service)
                             stdin, stdout, stderr = ssh.exec_command(command_string)
                             wx.CallAfter(self.callback_update_message, ''.join(stdout.readlines()))
                             wx.CallAfter(self.callback_update_message, ''.join(stderr.readlines()))
                             err = self.get_available_err(stderr.readlines())
                             if '' != err:
-                                self.write_log(err)
+                                self.write_log(platform_name, err)
                                 wx.CallAfter(self.callback_update_status, '%s启动失败'%current_service)
                             else:
-                                self.write_log(''.join(stdout.readlines()))
-                                self.write_log('%s install end.'%current_service)
+                                self.write_log(platform_name, ''.join(stdout.readlines()))
+                                self.write_log(platform_name, '%s install end.'%current_service)
                                 wx.CallAfter(self.callback_update_status, '%s已启动'%current_service)
-                                wx.CallAfter(self.callback_update_service_list, subid, current_service)
+                                wx.CallAfter(self.callback_update_service_list, platform_name, subid, current_service)
         except Exception as e:
-            self.write_log('%s,%s'%(host,str(e)))
+            self.write_log(platform_name, '%s,%s'%(host,str(e)))
             wx.CallAfter(self.callback_update_status, '连接失败')
             wx.CallAfter(self.callback_update_message, str(e))
         wx.CallAfter(self.callback_update_data)
@@ -866,19 +884,19 @@ class MainWindow(MainFrame):
             service_item = self._services[current_service]
             if 'Stop' in service_item.keys():
                 for command_string in service_item['Stop']:
-                    self.write_log('%s install start.'%current_service)
+                    self.write_log(platform_name, '%s install start.'%current_service)
                     wx.CallAfter(self.callback_update_status, '%s开始停止'%current_service)
                     stdin, stdout, stderr = ssh.exec_command(command_string)
                     err = ''.join(stderr.readlines())
                     wx.CallAfter(self.callback_update_message, ''.join(stdout.readlines()))
                     wx.CallAfter(self.callback_update_message, ''.join(stderr.readlines()))
                     if '' != err:
-                        self.write_log(err)
+                        self.write_log(platform_name, err)
                         wx.CallAfter(self.callback_update_status, '%s停止失败'%current_service)
                     else:
-                        self.write_log(''.join(stdout.readlines()))
+                        self.write_log(platform_name, ''.join(stdout.readlines()))
                         wx.CallAfter(self.callback_update_status, '%s已停止'%current_service)
-                        wx.CallAfter(self.callback_update_service_list, subid, current_service)
+                        wx.CallAfter(self.callback_update_service_list, platform_name, subid, current_service)
         except Exception as e:
             print('%s,%s'%(host,str(e)))
             wx.CallAfter(self.callback_update_status, '连接失败')
@@ -914,11 +932,12 @@ class MainWindow(MainFrame):
         '''
         subid = self.get_current_grid_subid()
         host = self.get_current_grid_ip()
+        platform_name = self.get_select_platform_name()
         port = 22
         username = 'root'
         password = self.get_current_grid_password()
         thread = threading.Thread(target=self.start_service_thread, 
-                                args=(subid, host, port, username, password))
+                                args=(platform_name, subid, host, port, username, password))
         thread.start()
 
     def stop_service(self, event):

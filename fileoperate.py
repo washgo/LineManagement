@@ -165,7 +165,7 @@ def _write_platform_json_file(platform_name, name, file_name, data):
         pass
     return False
 
-def write_file(name, file_name, data):
+def write_file(platform_name, name, file_name, data):
     '''
     写入文件
     '''

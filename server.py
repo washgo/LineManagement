@@ -127,11 +127,11 @@ def write_config(platform_name, name, data):
     '''
     return fileoperate.write_server_file(platform_name, name, data)
 
-def insert_service(name, subid, service_name, service_generation):
+def insert_service(platform_name, name, subid, service_name, service_generation):
     '''
     插入service
     '''
-    data = service.read_service_config(name)
+    data = service.read_service_config(platform_name, name)
     server_item = data[subid]
     server_item_services = {}
     if 'services' in server_item.keys():
@@ -151,13 +151,13 @@ def insert_service(name, subid, service_name, service_generation):
         service_name = service_name.upper()
         if service_name not in service_list:
             server_item['service_list'] = service_list + ',' + service_name
-    service.write_service_config(name, data)
+    service.write_service_config(platform_name, name, data)
 
-def update_service_list(name, subid, service_name):
+def update_service_list(platform_name, name, subid, service_name):
     '''
     更新service列表
     '''
-    data = service.read_service_config(name)
+    data = service.read_service_config(platform_name, name)
     server_item = data[subid]
     service_list = ''
     if 'service_list' not in server_item.keys():
@@ -170,7 +170,7 @@ def update_service_list(name, subid, service_name):
         service_name = service_name.upper()
         if service_name not in service_list:
             server_item['service_list'] = service_list + ',' + service_name
-    service.write_service_config(name, data)
+    service.write_service_config(platform_name, name, data)
 
 def read_config(platform_name, name):
     '''
