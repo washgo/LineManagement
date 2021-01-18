@@ -11,8 +11,10 @@ LineManagement可以配置各种服务，服务的添加和删除通过设置文
         // 服务安装阶段
         "Install":{
             "Config":{
-                "Port": "", // 服务暴露端口
-                "Password": ""  // 服务暴露密码,如果需要
+                "Host":"",
+                "Content":{
+                },
+                "File": ""
             },
             "Command":[
                 ""  // 需要执行的命令
